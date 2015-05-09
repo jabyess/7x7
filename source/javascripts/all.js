@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	//control flow here
 	Game.run = function() {
 		//update and draw separately in here
-		// console.log('running');
+
 		Game.draw.fillSquares(3);
 
 		window.clearInterval(Game._intervalId);
