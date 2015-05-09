@@ -1,0 +1,36 @@
+html {
+  font-size: 14px;
+}
+.titlebar {
+  height: 4rem;
+  .title {
+    font-size: 3rem;
+    margin: auto;
+    text-align: center;
+  }
+}
+#gamecontainer {
+  max-width: 65%;
+  border: 1px solid #000;
+  font-size: 0;
+  padding: 2rem;
+
+  #boardcontainer {
+    width: 36rem;
+    margin: auto;
+    border: 1px solid #bcbcbc;
+
+
+    .square {
+      width: 5rem;
+      height: 5rem;
+      border: 1px solid #bcbcbc;
+      display: inline-block;
+    }
+    
+
+  }  
+}
+#statscontainer {
+  width: 35%;
+}
