@@ -1,6 +1,9 @@
 /* jshint -W058 */
 document.addEventListener('DOMContentLoaded', function(event) {
 
+var tick = 0;
+
+
 function drawBoard() {
 	var board = document.getElementById('boardcontainer');
 
@@ -13,19 +16,16 @@ function drawBoard() {
 	}
 }
 
-
-Data = {
+gameData = {
 	level : 1,
 	score : {},
-	stats : {}
+	stats : {
+		clicks: 0,
+		moves: 0
+	}
 };
 
 gameUtils = {	
-	events : {
-		click : function() {
-			console.log(this);
-		}
-	},
 	draw : {
 		pickRandomColor : function(obj, num) {
 			//obj = colors object, num = number of colors to pick from
@@ -37,7 +37,20 @@ gameUtils = {
 			for(var i=1; i <= num; i++) {
 				var randomId = Math.floor(Math.random() * 49 +1);
 				var squareToFill = document.getElementById('sq'+randomId);
-				squareToFill.style.backgroundColor = Game.draw.pickRandomColor(Game.colors, 3);
+				squareToFill.style.backgroundColor = gameUtils.draw.pickRandomColor(gameUtils.colors, 3);
+			}
+		},
+		fillEmptySquares: function(num) {
+			for(var i = 1; i<= num; i++) {
+				var randomId = Math.floor(Math.random() * 49 + 1);
+				var squareToFill = document.getElementById('sq'+randomId);
+				if(squareToFill.style.backgroundColor) {
+					console.log('picked a full square!');
+					i--;
+				}
+				else {
+					squareToFill.style.backgroundColor = gameUtils.draw.pickRandomColor(gameUtils.colors, 3);
+				}
 			}
 		}
 	},
@@ -50,28 +63,17 @@ gameUtils = {
 		'cyan' : '#14fcff'
 	}
 };
-timestamp = function() {
-	return window.performance && window.performance.now ? window.performance.now() : (new Date()).getTime();
-};
-
-function setupListeners() {
-	// var s = document.getElementsByClassName('square');
-	// for(var i = 0; i < s.length; i++){
-	// 	s[i].addEventListener('click', Game.events.click, false);
-	// }
-}
 
 function Game() {
 	//main game is here
-	console.log('game is cool');
+	console.log('game class constructed');
 
-	var fps = 40,
-	tick = 0;
+	this.init();
 
 	//listeners for squares
 	var squareListeners = document.getElementsByClassName('square');
 	for(var i = 0; i < squareListeners.length; i++){
-		squareListeners[i].addEventListener('click', Game.events.click, false);
+		squareListeners[i].addEventListener('click', this.onclick, false);
 	}
 
 	window.requestAnimationFrame =
@@ -85,62 +87,59 @@ function Game() {
 
 Game.prototype.draw = function() {
 	tick++;
-	gameUtils.draw.fillSquares(3);
+	// console.log(tick);
+	if(tick > 100) {
+		tick = 0;
+	}
 
+	this.drawNumbers();
+	this.update();
+
+
+	requestAnimationFrame(this.draw.bind(this));
 };
+
 Game.prototype.update = function() {
 
+
 };
 
+Game.prototype.onclick = function() {
+	gameData.stats.clicks++;
+	var squareIsActive = squareIsActive || false;
+
+	function highlightSquare(hasColor, isActive) {
+		if(hasColor && !isActive) {
+			this.style.transform = 'scale(1.1)';
+			squareIsActive = true;	
+			console.log('made active');
+		}	
+		console.log('else');
+	}
+	//move square
+	// if(!this.style.backgroundColor && !squareIsActive) {
+	// 	squareIsActive = false;
+	// }
+
+	var wat = highlightSquare.bind(this, this.style.backgroundColor, squareIsActive);
+	wat();
+
+};
+
+Game.prototype.drawNumbers = function() {
+	var stats = stats || document.getElementById('clicks');
+	stats.innerHTML = gameData.stats.clicks;
+
+};
 Game.prototype.init = function() {
 	console.log('init fired');
 
-	//define board drawing functions
-
-
 	drawBoard();
-	setupObjects();
-	setupListeners();
+	gameUtils.draw.fillEmptySquares(3);
 };
 
-//init stuff
-
-
+//init the game here and stuff
 var game = new Game();
-
-
-
-//control flow here
-// Game.run = (function() {
-// 	var loops = 0, skipTicks = 1000 / Game.fps,
-// 	maxFrameSkip = 10,
-// 	nextGameTick = timestamp();
-
-// 	return function() {
-// 		loops = 0;
-
-// 		while ((new Date).getTime() > nextGameTick && loops < maxFrameSkip ) {
-// 			Game.update();
-// 			nextGameTick += skipTicks;
-// 			loops++;		
-// 		}
-
-		
-	
-
-	
-// // };
-// window.clearInterval(Game._intervalId);
-
-// })();
-
-
-
-
-// //actual game loop here
-// Game._intervalId = window.setInterval(Game.run, 1000 / Game.fps);
-
-
 
 
 });
