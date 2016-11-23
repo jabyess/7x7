@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 var tick = 0;
 
-
 function drawBoard() {
 	var board = document.getElementById('boardcontainer');
 
@@ -147,7 +146,9 @@ function Game() {
 	//main game is here
 	console.log('game class constructed');
 
-	this.init();
+	// this.init();
+
+	window.addEventListener('DOMContentLoaded', this.init);
 
 	
 
@@ -220,6 +221,7 @@ Game.prototype.statusUpdateLoop = function() {
 Game.prototype.init = function() {
 	console.log('init fired');
 
+	
 	drawBoard();
 
 	// gameUtils.squareListeners();
