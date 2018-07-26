@@ -1,34 +1,22 @@
-/* jshint -W058 */
 document.addEventListener('DOMContentLoaded', function(event) {
 
 var tick = 0;
 
-function drawBoard() {
-	var board = document.getElementById('boardcontainer');
-
-	//make 49 squares. board is 7x7, duh.
-	for(var i = 1; i <= 49; i++) {
-		var sq = document.createElement('div');
-		sq.setAttribute('id','sq'+i);
-		sq.setAttribute('class','square');
-		sq.dataset.active = false;
-		board.appendChild(sq);
-	}
-}
-
-gameData = {
+let gameData = {
 	level : 1,
 	score : {},
 	stats : {
 		clicks: 0,
 		moves: 0
 	},
+	active: '',
+	clickQ: [],
 	squares : {
 
 	}
 };
 
-gameUtils = {	
+let utils = {	
 	draw : {
 		pickRandomColor : function(obj, num) {
 			//obj = colors object, num = number of colors to pick from
@@ -40,7 +28,7 @@ gameUtils = {
 			for(var i=1; i <= num; i++) {
 				var randomId = Math.floor(Math.random() * 49 +1);
 				var squareToFill = document.getElementById('sq'+randomId);
-				squareToFill.style.backgroundColor = gameUtils.draw.pickRandomColor(gameUtils.colors, 3);
+				squareToFill.style.backgroundColor = utils.draw.pickRandomColor(utils.colors, 3);
 			}
 		},
 		fillEmptySquares: function(num) {
@@ -52,7 +40,7 @@ gameUtils = {
 					i--;
 				}
 				else {
-					squareToFill.style.backgroundColor = gameUtils.draw.pickRandomColor(gameUtils.colors, 3);
+					squareToFill.style.backgroundColor = utils.draw.pickRandomColor(utils.colors, 3);
 				}
 			}
 		}
@@ -74,64 +62,81 @@ gameUtils = {
 				return false;
 			}
 		},
-		highlightFunction: function(hasColor, isActive) {
-			// console.log(this);
-			function highlightSquare() {
-				console.log(this);
-				this.style.transform = 'scale(1.1)';
-				this.dataset.active = true;
-				// squareIsActive = true;	
-				console.log('made active');
-			}
-			function unhighlightSquare() {
-				this.style.transform = 'scale(1.0)';
-				this.dataset.active = false;
-				console.log('already active');
-			}
-			function makeAllSquaresInactive() {
-
-			}
-			if(hasColor && isActive === 'true') {
-				unhighlightSquare.bind(this);
-			}
-			else if(gameUtils.update.checkActiveSquares(gameData.squares.active) === true) {
-				var activeSquares = document.querySelector('[data-active="true"]');
-				activeSquares.dataset.active = 'false';
-				unhighlightSquare(this);
-				console.log(activeSquares);
-				console.log('another square is active');
-
-			}
-			else if(hasColor && isActive === 'false') {
-				highlightSquare.bind(this);
-				
-			}
-			else {
-				console.log('not active');
-			}
-		}
 
 	},
 	init: {
-		squareObjGenerator : function() {
-			var defaults = {
-				'color' : '#fff',
-				'selected' : false
-			};
-			for(var j = 1; j <= 49; j++) {
-				// gameData.squares['sq'+j] = new gameData.squares(defaults);
-				var sqName = 'sq'+j;
-				gameData.squares[sqName] = defaults;
+		drawBoard: function() {
+			var board = document.getElementById('boardcontainer');
+
+			//make 49 squares. board is 7x7, duh.
+			for(var i = 1; i <= 49; i++) {
+				var sq = document.createElement('div');
+				sq.setAttribute('id','sq'+i);
+				sq.setAttribute('class','square');
+				sq.dataset.active = false;
+				board.appendChild(sq);
 			}
 		},
 	},
-	
-	squareListeners : function() {
-		//listeners for squares
-		//get this working with bind duh
 
-
+	makeActive: function(id) {
+		let current = document.getElementById(id)
+		current.classList.add('active')
 	},
+
+	makeInactive: function(id) {
+		let current = document.getElementById(id)
+		current.classList.remove('active')
+	},
+
+	moveSquare: function(from, to) {
+		let fromSquare = document.getElementById(from)
+		let toSquare = document.getElementById(to)
+
+		toSquare.style.backgroundColor = fromSquare.style.backgroundColor;
+		fromSquare.removeAttribute('style');
+		fromSquare.classList.remove('active');
+		gameData.active = '';
+
+		
+	},
+
+	onClick: function(e) {
+		gameData.stats.clicks++;
+		let target = e.target.id;
+
+		// keep queue short
+		if(gameData.clickQ.length > 5) {
+			gameData.clickQ.pop()
+		}
+
+		gameData.clickQ.unshift(target)
+
+		console.log(gameData.clickQ);
+
+		if(!gameData.active) {
+			// set active id
+			gameData.active = target
+			// make active visually
+			utils.makeActive(gameData.active)
+			
+		}
+		else if(gameData.active === target) {
+			// deselect
+			utils.makeInactive(gameData.active)
+			gameData.active = '';
+		}
+		else {
+			// move square
+			let from = gameData.clickQ[1]
+			let to = gameData.clickQ[0]
+
+			utils.moveSquare(from, to)
+		}
+
+		console.log(gameData)
+	},
+
 	colors : {
 		'blue' : '#2882ff',
 		'red' : '#ff141d',
@@ -146,11 +151,7 @@ function Game() {
 	//main game is here
 	console.log('game class constructed');
 
-	// this.init();
-
 	window.addEventListener('DOMContentLoaded', this.init);
-
-	
 
 	window.requestAnimationFrame =
 	    window.requestAnimationFrame ||
@@ -163,49 +164,26 @@ function Game() {
 
 Game.prototype.draw = function() {
 	tick++;
-	// console.log(tick);
+
 	if(tick > 100) {
 		tick = 0;
 	}
-
 	
 	this.update();
-
 
 	requestAnimationFrame(this.draw.bind(this));
 };
 
 Game.prototype.update = function() {
 	this.updateNumbers();
-
 	this.statusUpdateLoop();
-
-
-
-};
-
-Game.prototype.onClick = function() {
-	gameData.stats.clicks++;
-	// var squareIsActive = squareIsActive || false;
-	var isActive = this.dataset.active;
-	console.log(gameData);
-
-
-	//move square
-	// if(!this.style.backgroundColor && !squareIsActive) {
-	// 	squareIsActive = false;
-	// }
-
-	var wat = gameUtils.update.highlightFunction.bind(this, this.style.backgroundColor, isActive);
-	wat();
-
 };
 
 Game.prototype.updateNumbers = function() {
 	var stats = stats || document.getElementById('clicks');
 	stats.innerHTML = gameData.stats.clicks;
-
 };
+
 Game.prototype.statusUpdateLoop = function() {
 	var squareCollection = document.getElementsByClassName('square');
 	gameData.squares.active = {};
@@ -215,25 +193,22 @@ Game.prototype.statusUpdateLoop = function() {
 			tmp[squareCollection[i].id] = true;
 			gameData.squares.active += tmp;
 		}
-
 	}
 };
+
 Game.prototype.init = function() {
 	console.log('init fired');
 
-	
-	drawBoard();
+	utils.init.drawBoard();
 
-	// gameUtils.squareListeners();
 	var squareListeners = document.getElementsByClassName('square');
+	// setup onclick handlers
 	for(var i = 0; i < squareListeners.length; i++){
-		squareListeners[i].addEventListener('click', this.onClick, false);
+		squareListeners[i].addEventListener('click', utils.onClick, false);
 	}
 
-	gameUtils.init.squareObjGenerator();
-	console.log(gameData);
 
-	gameUtils.draw.fillEmptySquares(3);
+	utils.draw.fillEmptySquares(3);
 };
 
 //init the game here and stuff
