@@ -1,5 +1,8 @@
+* {
+  box-sizing: border-box; }
+
 html {
-  font-size: 14px; }
+  font-size: 18px; }
 
 .titlebar {
   height: 4rem; }
@@ -14,20 +17,22 @@ html {
   font-size: 0;
   padding: 2rem;
   margin: auto; }
-  #gamecontainer #boardcontainer {
-    width: 36rem;
-    margin: auto;
+
+#boardcontainer {
+  width: 36rem;
+  margin: auto;
+  border: 1px solid #bcbcbc;
+  display: inline-block; }
+  #boardcontainer .square {
+    width: 4.98rem;
+    height: 5rem;
     border: 1px solid #bcbcbc;
     display: inline-block; }
-    #gamecontainer #boardcontainer .square {
-      width: 4.98rem;
-      height: 5rem;
-      border: 1px solid #bcbcbc;
-      display: inline-block; }
+    #boardcontainer .square.active {
+      transform: scale(1.1, 1.1); }
 
 #statscontainer {
   font-size: 14px;
-  width: 450px;
   margin-left: 50px;
   display: inline-block;
   border: 1px solid #000;
