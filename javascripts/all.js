@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       moves: 0
     },
     active: "",
+    matched: [],
     clickQ: [],
     squares: []
   }
@@ -77,15 +78,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
           row.setAttribute("class", "row")
           board.appendChild(row)
 
+          gameData.squares.push([])
+
           var rowElem = document.getElementById(`row${r}`)
 
           for (var c = 0; c <= width; c++) {
             var sq = document.createElement("div")
             sq.setAttribute("id", `sq${r}${c}`)
             sq.setAttribute("class", "square")
+            sq.dataset.x = r
+            sq.dataset.y = c
             rowElem.appendChild(sq)
+            gameData.squares[r].push(sq)
           }
         }
+
+        // console.log(gameData)
       }
     },
 
@@ -194,20 +202,43 @@ document.addEventListener("DOMContentLoaded", function(event) {
     stats.innerHTML = gameData.stats.clicks
   }
 
-  Game.prototype.checkNeighbors = function() {
-    let length,
-      height = 6
-    for (let r = 0; r <= length; r++) {
-      for (let c = 0; c <= height; c++) {
-        if (gameData.squares) console.log()
+  Game.prototype.checkRight = function(x, y, matched) {
+    if(y >= 6 || x >= 6) return
+    else if (
+      gameData.squares[x][y + 1].style.backgroundColor === 
+      gameData.squares[x][y].style.backgroundColor
+    ) {
+      matched.push(gameData.squares[x][y + 1])
+      this.checkRight(x, y + 1, matched)
+    }
+    else {
+      if(matched.length >= 4) {
+        gameData.matched[x] = matched
+      }
+      return
+    }
+  }
+
+  Game.prototype.checkNeighbors = function(x, y) {
+    let startMatch = [gameData.squares[x][y]]
+    this.checkRight(x, y, startMatch)
+    // check others after
+  }
+
+  Game.prototype.checkNeighborsLoop = function() {
+    for (let x = 0; x < 7; x++) {
+      for (let y = 0; y < 7; y++) {
+        // if no color, skip
+        if (gameData.squares[x][y].style.backgroundColor) {
+          // initiate checking functions
+          this.checkNeighbors(x, y)
+        }
       }
     }
   }
 
   Game.prototype.statusUpdateLoop = function() {
-    gameData.squares = document.getElementsByClassName("square")
-
-    this.checkNeighbors()
+    this.checkNeighborsLoop()
   }
 
   Game.prototype.init = function() {
