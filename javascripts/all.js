@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   let gameData = {
     level: 1,
-    score: {},
+    score: 0,
     stats: {
       clicks: 0,
       moves: 0
     },
     active: "",
-    matched: [],
+    matches: [],
     clickQ: [],
     squares: []
   }
@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
     else {
       if(matched.length >= 4) {
-        gameData.matched[x] = matched
+        gameData.matches[x] = matched
       }
       return
     }
@@ -232,8 +232,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
         if (gameData.squares[x][y].style.backgroundColor) {
           // initiate checking functions
           this.checkNeighbors(x, y)
+          this.removeMatches()
         }
       }
+    }
+  }
+
+  Game.prototype.removeMatches = function() {
+    if(gameData.matches.length > 0) {
+      gameData.matches.forEach(match => {
+        match.forEach((sq, i, arr) => {
+          sq.removeAttribute('style')
+          gameData.score += 1
+          // arr.splice(i, 1)
+        })
+      })
     }
   }
 
