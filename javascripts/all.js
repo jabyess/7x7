@@ -3,10 +3,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   let gameData = {
     level: 1,
-    score: 0,
     stats: {
-      clicks: 0,
-      moves: 0
+      clicks: {
+        id: "clicks",
+        value: 0
+      },
+      moves: {
+        id: "moves",
+        value: 0
+      },
+      score: {
+        id: "score",
+        value: 0,
+      },
+      level: {
+        id: "level",
+        value: 1
+      }
     },
     active: "",
     matches: [],
@@ -49,24 +62,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
       }
     },
-    update: {
-      checkActiveSquares: function(activeObj) {
-        //returns true if more than one square is higlighted
-        //takes gameData.squares.active as preferred object.
-        var size = 0,
-          s
-        for (s in activeObj) {
-          if (activeObj.hasOwnProperty(s)) {
-            size++
-          }
-        }
-        if (size > 1) {
-          return true
-        } else {
-          return false
-        }
-      }
-    },
     init: {
       drawBoard: function() {
         var board = document.getElementById("boardcontainer")
@@ -92,8 +87,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
             gameData.squares[r].push(sq)
           }
         }
-
-        // console.log(gameData)
       }
     },
 
@@ -119,27 +112,36 @@ document.addEventListener("DOMContentLoaded", function(event) {
       utils.draw.fillEmptySquares(1)
     },
 
+    updateNumbers: function() {
+      for(stat in gameData.stats) {
+        gameData.stats[stat]
+        let elem = document.getElementById(gameData.stats[stat].id)
+        let value = gameData.stats[stat].value
+        elem.innerHTML = value
+      }
+    },
+
     onClick: function(e) {
-      gameData.stats.clicks++
-      let target = e.target.id
-      let targetElem = document.getElementById(target)
+      gameData.stats.clicks.value += 1
+      let targetID = e.target.id
 
       // keep queue short
       if (gameData.clickQ.length > 5) {
         gameData.clickQ.pop()
       }
 
-      gameData.clickQ.unshift(target)
+      gameData.clickQ.unshift(targetID)
 
       if (!gameData.active) {
         // set active id
-        gameData.active = target
+        gameData.active = targetID
         // make active visually
         utils.makeActive(gameData.active)
-      } else if (gameData.active === target) {
-        // deselect
+        // if the clicked element is the active element
+      } else if (gameData.active === targetID) {
+        // then deselect
         utils.makeInactive(gameData.active)
-        gameData.active = ""
+        gameData.active = null
       } else {
         // move square
         let from = gameData.clickQ[1]
@@ -152,7 +154,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
       }
 
-      console.log(gameData)
+      utils.updateNumbers()
+
+      console.log(gameData.matches)
     },
 
     colors: {
@@ -193,13 +197,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 
   Game.prototype.update = function() {
-    this.updateNumbers()
-    this.statusUpdateLoop()
-  }
-
-  Game.prototype.updateNumbers = function() {
-    var stats = stats || document.getElementById("clicks")
-    stats.innerHTML = gameData.stats.clicks
+    this.checkNeighborsLoop()
   }
 
   Game.prototype.checkRight = function(x, y, matched) {
@@ -219,9 +217,27 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
   }
 
+  Game.prototype.checkDown = function(x, y, matched) {
+    if(y >= 6 || x >= 6) return
+    else if(
+      gameData.squares[x + 1][y].style.backgroundColor === 
+      gameData.squares[x][y].style.backgroundColor
+    ) {
+      matched.push(gameData.squares[x + 1][y])
+      this.checkDown(x + 1, y, matched)
+    }
+    else {
+      if(matched.length >= 4) {
+        gameData.matches[x] = matched
+      }
+      return
+    }
+  }
+
   Game.prototype.checkNeighbors = function(x, y) {
     let startMatch = [gameData.squares[x][y]]
     this.checkRight(x, y, startMatch)
+    this.checkDown(x, y, startMatch)
     // check others after
   }
 
@@ -243,15 +259,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
       gameData.matches.forEach(match => {
         match.forEach((sq, i, arr) => {
           sq.removeAttribute('style')
-          gameData.score += 1
-          // arr.splice(i, 1)
+          gameData.stats.score.value += 1
+          arr.splice(i, 1)
         })
       })
     }
-  }
-
-  Game.prototype.statusUpdateLoop = function() {
-    this.checkNeighborsLoop()
   }
 
   Game.prototype.init = function() {

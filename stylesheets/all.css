@@ -30,7 +30,7 @@ html {
     #boardcontainer .square.active {
       transform: scale(1.1, 1.1); }
 
-#statscontainer {
+#stats {
   font-size: 14px;
   margin-left: 50px;
   display: inline-block;

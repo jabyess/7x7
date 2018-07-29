@@ -1,33 +1,46 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    
-    <!-- Always force latest IE rendering engine or request Chrome Frame -->
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
 
-		<title>7x7 Game</title>
-		<script src="javascripts/all.js"></script>
-		<link rel="stylesheet" href="stylesheets/all.css">
-  </head>
-  
-  <body>
+<head>
+	<meta charset="utf-8">
+
+	<!-- Always force latest IE rendering engine or request Chrome Frame -->
+	<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+	<title>7x7 Game</title>
+	<script src="javascripts/all.js"></script>
+	<link rel="stylesheet" href="stylesheets/all.css">
+</head>
+
+<body>
 	<div class="titlebar">
 		<h3 class="title">7x7 Game</h3>
 	</div>
 	<div id="gamecontainer">
-		<div id="boardcontainer"></div>	
+		<div id="boardcontainer"></div>
 
-		<div id="statscontainer">
-			
+		<div id="stats">
 			<div>
-				<span>Total Clicks</span>
-				<span id="clicks"></span>
+				<span>Clicks</span>
+				<span id="clicks">0</span>
+			</div>
+			<div>
+				<span>Moves</span>
+				<span id="moves">0</span>
+			</div>
+			<div>
+				<span>Score</span>
+				<span id="score">0</span>
+			</div>
+			<div>
+				<span>Level</span>
+				<span id="level">0</span>
 			</div>
 
 		</div>
 	</div>
 
 
-  </body>
+</body>
+
 </html>
