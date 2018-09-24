@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				value: 1
 			}
 		},
-		squaresToFill: level.value + 1,
 		active: "",
 		matches: [],
 		clickQ: [],
@@ -32,17 +31,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				//obj = colors object, num = number of colors to pick from
 				var colors = Object.keys(obj)
 				return obj[colors[(num * Math.random()) << 0]]
-			},
-			fillSquares: function(num) {
-				//num defines how many colored squares to get
-				for (var i = 1; i <= num; i++) {
-					var randomId = Math.floor(Math.random() * 49 + 1)
-					var squareToFill = document.getElementById("sq" + randomId)
-					squareToFill.style.backgroundColor = utils.draw.pickRandomColor(
-						utils.colors,
-						3
-					)
-				}
 			},
 			fillEmptySquares: function(num) {
 				for (var i = 1; i <= num; i++) {
@@ -86,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						gameData.squares[r].push(sq)
 					}
 				}
+				console.log(gameData.squares)
 			}
 		},
 
@@ -109,31 +98,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			gameData.active = ""
 			gameData.stats.moves.value += 1
 
-			utils.draw.fillEmptySquares(1)
+			utils.draw.fillEmptySquares(gameData.stats.level.value + 1)
 		},
 
 		updateNumbers: function() {
 			for (stat in gameData.stats) {
 				gameData.stats[stat]
 				let elem = document.getElementById(gameData.stats[stat].id)
-				let value = gameData.stats[stat].value
-				console.log(stat, value)
-				elem.innerHTML = value
+				elem.innerHTML = gameData.stats[stat].value
 			}
 		},
 
 		onClick: function(e) {
 			gameData.stats.clicks.value += 1
 			let targetID = e.target.id
+			let bgc = e.target.style.backgroundColor
 
 			// keep queue short
-			if (gameData.clickQ.length > 5) {
+			if (gameData.clickQ.length > 10) {
 				gameData.clickQ.pop()
 			}
 
 			gameData.clickQ.unshift(targetID)
 
-			if (!gameData.active) {
+			if (!gameData.active && bgc) {
 				// set active id
 				gameData.active = targetID
 				// make active visually
@@ -143,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				// then deselect
 				utils.makeInactive(gameData.active)
 				gameData.active = null
-			} else {
+			} else if(gameData.active && !bgc) {
 				// move square
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
@@ -152,12 +140,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				// only move if we click on an empty square
 				if (!toElem.style.backgroundColor) {
 					utils.moveSquare(from, to)
+					console.log(gameData.matches)
 				}
 			}
 
 			utils.updateNumbers()
 
-			console.log(gameData.matches)
 		},
 
 		colors: {
@@ -318,8 +306,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				match.forEach(sq => {
 					sq.removeAttribute("style")
 				})
-				gdArr.splice(m, 1)
+				// gdArr.splice(m, 1)
 			})
+			gameData.matches.length = 0;
 		}
 	}
 
