@@ -19,6 +19,20 @@ Every turn, random squares appear in random locations. Select a square and move 
 
 A square may only be moved if there's a clear path to the new location (but this doesn't work yet).
 
+## Execution
+
+```
+$ git clone https://github.com/jabyess/7x7
+$ cd 7x7
+```
+
+Then load up `index.html` in your favorite static webserver. If you don't have one:
+
+```
+$ npm install -g http-server
+$ http-server .
+```
+
 ## Todo:
 
 * Build a better match data structure - probably use Set() for duplicate removal
