@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		},
 		active: "",
-		matches: [],
+		matches: new Set(),
 		clickQ: [],
 		squares: []
 	}
@@ -78,6 +78,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		},
 
+		addMatch: function(val) {
+			val.forEach(n => {
+				gameData.matches.add(n)
+			})
+		},
+
+		encodeMatch: function(x, y) {
+			return `${x}${y}`
+		},
+
+		decodeMatch: function(num) {
+			return num.split("").map(n => parseInt(n))
+		},
+
 		makeActive: function(id) {
 			let current = document.getElementById(id)
 			current.classList.add("active")
@@ -131,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				// then deselect
 				utils.makeInactive(gameData.active)
 				gameData.active = null
-			} else if(gameData.active && !bgc) {
+			} else if (gameData.active && !bgc) {
 				// move square
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
@@ -145,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 
 			utils.updateNumbers()
-
 		},
 
 		colors: {
@@ -188,11 +201,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			gameData.squares[x + 1][y + 1].style.backgroundColor ===
 				gameData.squares[x][y].style.backgroundColor
 		) {
-			matched.push(gameData.squares[x + 1][y + 1])
+			matched.push(utils.encodeMatch(x + 1, y + 1))
 			this.checkDR(x + 1, y + 1, matched)
 		} else {
 			if (matched.length >= 4) {
-				gameData.matches[x] = matched
+				utils.addMatch(matched)
 			}
 		}
 	}
@@ -204,11 +217,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			gameData.squares[x - 1][y + 1].style.backgroundColor ===
 				gameData.squares[x][y].style.backgroundColor
 		) {
-			matched.push(gameData.squares[x - 1][y + 1])
+			matched.push(utils.encodeMatch(x - 1, y + 1))
 			this.checkUR(x - 1, y + 1, matched)
 		} else {
 			if (matched.length >= 4) {
-				gameData.matches[x] = matched
+				utils.addMatch(matched)
 			}
 		}
 	}
@@ -219,11 +232,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			gameData.squares[x][y + 1].style.backgroundColor ===
 				gameData.squares[x][y].style.backgroundColor
 		) {
-			matched.push(gameData.squares[x][y + 1])
+			matched.push(utils.encodeMatch(x, y + 1))
 			this.checkRight(x, y + 1, matched)
 		} else {
 			if (matched.length >= 4) {
-				gameData.matches[x] = matched
+				utils.addMatch(matched)
 			}
 		}
 	}
@@ -235,17 +248,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				gameData.squares[x][y].style.backgroundColor
 		) {
 			//
-			matched.push(gameData.squares[x + 1][y])
+			matched.push(utils.encodeMatch(x + 1, y))
 			this.checkDown(x + 1, y, matched)
 		} else {
 			if (matched.length >= 4) {
-				gameData.matches[x] = matched
+				utils.addMatch(matched)
 			}
 		}
 	}
 
 	Game.prototype.checkNeighbors = function(x, y) {
-		let matched = [gameData.squares[x][y]]
+		let matched = [utils.encodeMatch(x, y)]
 		// check down if x < 6
 
 		this.checkDown(x, y, matched)
@@ -291,24 +304,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		let filler = Array(length).fill(1 * mult, 0)
 
 		let score = filler.reduce((acc, curr) => {
-			return acc += curr
+			return (acc += curr)
 		})
 
 		gameData.stats.score.value += score
 	}
 
 	Game.prototype.removeMatches = function() {
-		let self = this
-		if (gameData.matches.length > 0) {
-			gameData.matches.forEach((match, m, gdArr) => {
-				self.calcScore(match.length)
-
-				match.forEach(sq => {
-					sq.removeAttribute("style")
-				})
-				// gdArr.splice(m, 1)
-			})
-			gameData.matches.length = 0;
+		if (gameData.matches.size > 0) {
+			this.calcScore(gameData.matches.size)
+			for (let match of gameData.matches.values()) {
+				let coords = utils.decodeMatch(match)
+				gameData.squares[coords[0]][coords[1]].removeAttribute("style")
+				gameData.matches.delete(match)
+			}
 		}
 	}
 
