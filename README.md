@@ -35,7 +35,6 @@ $ http-server .
 
 ## Todo:
 
-* Build a better match data structure - probably use Set() for duplicate removal
 * Implement pathfinding algorithm to ensure moves are valid and invalid
   * Only moves with a clear path should be considered valid
 * Levels

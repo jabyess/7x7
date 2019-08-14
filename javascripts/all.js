@@ -173,7 +173,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 	function Game() {
 		//main game is here
-		// window.addEventListener("DOMContentLoaded", this.init)
 
 		window.requestAnimationFrame =
 			window.requestAnimationFrame ||
@@ -195,6 +194,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkDR = function(x, y, matched) {
+		var matched = matched || [utils.encodeMatch(x,y)]
 		if (
 			y < 6 &&
 			x < 6 &&
@@ -203,14 +203,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		) {
 			matched.push(utils.encodeMatch(x + 1, y + 1))
 			this.checkDR(x + 1, y + 1, matched)
-		} else {
-			if (matched.length >= 4) {
-				utils.addMatch(matched)
-			}
+		} else if (matched.length >= 4) {
+			console.log("adding match DR", matched)
+			utils.addMatch(matched)
 		}
 	}
 
 	Game.prototype.checkUR = function(x, y, matched) {
+		var matched = matched || [utils.encodeMatch(x,y)]
 		if (
 			y < 6 &&
 			x > 0 &&
@@ -219,14 +219,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		) {
 			matched.push(utils.encodeMatch(x - 1, y + 1))
 			this.checkUR(x - 1, y + 1, matched)
-		} else {
-			if (matched.length >= 4) {
-				utils.addMatch(matched)
-			}
+		} else if (matched.length >= 4) {
+			console.log("adding match UR", matched)
+			utils.addMatch(matched)
 		}
 	}
 
 	Game.prototype.checkRight = function(x, y, matched) {
+		var matched = matched || [utils.encodeMatch(x,y)]
 		if (
 			y < 6 &&
 			gameData.squares[x][y + 1].style.backgroundColor ===
@@ -234,14 +234,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		) {
 			matched.push(utils.encodeMatch(x, y + 1))
 			this.checkRight(x, y + 1, matched)
-		} else {
-			if (matched.length >= 4) {
-				utils.addMatch(matched)
-			}
+		} else if (matched.length >= 4) {
+			console.log("adding match R", matched)
+			utils.addMatch(matched)
 		}
 	}
 
 	Game.prototype.checkDown = function(x, y, matched) {
+		var matched = matched || [utils.encodeMatch(x,y)]
 		if (
 			x < 6 &&
 			gameData.squares[x + 1][y].style.backgroundColor ===
@@ -250,21 +250,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			//
 			matched.push(utils.encodeMatch(x + 1, y))
 			this.checkDown(x + 1, y, matched)
-		} else {
-			if (matched.length >= 4) {
-				utils.addMatch(matched)
-			}
+		} else if (matched.length >= 4) {
+			console.log("adding match D", matched)
+			utils.addMatch(matched)
 		}
 	}
 
 	Game.prototype.checkNeighbors = function(x, y) {
-		let matched = [utils.encodeMatch(x, y)]
+		// let matched = [utils.encodeMatch(x, y)]
 		// check down if x < 6
 
-		this.checkDown(x, y, matched)
-		this.checkRight(x, y, matched)
-		this.checkDR(x, y, matched)
-		this.checkUR(x, y, matched)
+		this.checkDown(x, y)
+		this.checkRight(x, y)
+		this.checkDR(x, y)
+		this.checkUR(x, y)
 	}
 
 	Game.prototype.checkNeighborsLoop = function() {
