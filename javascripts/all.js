@@ -145,9 +145,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			// starting with fx, fy which will be the from square
 			// tx, ty are to square coords
 
-
-			let fx = utils.getY(from)
-			let fy = utils.getX(from)
+			let fx = utils.getX(from)
+			let fy = utils.getY(from)
 
 			let tx = utils.getY(to)
 			let ty = utils.getX(to)
@@ -253,9 +252,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				// check to see if path is valid?
 				console.log(gameData.clickQ)
 				// only move if we click on an empty square
-				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
+				// if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
+				if (!toElem.style.backgroundColor){
 					utils.moveSquare(from, to)
 					console.log(gameData.matches)
+					// after move, update kick off check square
+					game.update()
+					
 				}
 			}
 
@@ -274,14 +277,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 	function Game() {
 		//main game is here
-
-		window.requestAnimationFrame(this.draw.bind(this))
-	}
-
-	Game.prototype.draw = function() {
-		this.update()
-
-		requestAnimationFrame(this.draw.bind(this))
 	}
 
 	Game.prototype.update = function() {
@@ -352,9 +347,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkNeighbors = function(x, y) {
-		// let matched = [utils.encodeMatch(x, y)]
-		// check down if x < 6
-
 		this.checkDown(x, y)
 		this.checkRight(x, y)
 		this.checkDR(x, y)
@@ -419,14 +411,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		console.log("init fired")
 
 		utils.init.drawBoard()
-
+		
 		var squareListeners = document.getElementsByClassName("square")
 		// setup onclick handlers
 		for (var i = 0; i < squareListeners.length; i++) {
 			squareListeners[i].addEventListener("click", utils.onClick, false)
 		}
-
+		
 		utils.draw.fillEmptySquares(3)
+		this.update()
 	}
 
 	//init the game here and stuff
