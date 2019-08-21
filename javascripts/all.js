@@ -123,6 +123,106 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		},
 
+		getBackgroundStyle: function(element) {
+			console.log('checking background', element)
+			if (element.style.backgroundColor) {
+				return element.style.backgroundColor
+			}
+			return null
+		},
+
+		getX: function(str) {
+			let nums = str.split("")
+			return `${nums[2]}`
+		},
+
+		getY: function(str) {
+			let nums = str.split("")
+			return `${nums[3]}`
+		},
+
+		isMoveValid: function(from, to) {
+			// starting with fx, fy which will be the from square
+			// tx, ty are to square coords
+
+
+			let fx = utils.getY(from)
+			let fy = utils.getX(from)
+
+			let tx = utils.getY(to)
+			let ty = utils.getX(to)
+
+			console.log(fy, fx, ty, tx)
+
+			// up === y-1
+			// down === y+1
+			// left === x-1
+			// right x+1
+
+			let toCheck = new Set(utils.encodeMatch(fx, fy))
+			let alreadyChecked = new Set()
+
+			// first check if from and to are the same,
+			// if so, path is valid, return true
+			// else
+
+			// fx, fy === current sq coords
+
+			// tx, ty === to square coords
+			while (toCheck.size > 0) {
+				if (fx === tx && fy === ty) {
+					console.log("move valid")
+					return true
+				} else {
+					alreadyChecked.add(utils.encodeMatch(fx, fy))
+					// check up
+					if (
+						fx > 0 &&
+						utils.getBackgroundStyle(gameData.squares[fx - 1][fy]) &&
+						!alreadyChecked.has(utils.encodeMatch(fx - 1, fy))
+					) {
+						console.log("up is valid")
+						toCheck.add(utils.encodeMatch(fx, fy - 1))
+					}
+					// check right
+					// if (
+					// 	fx < 6 &&
+					// 	utils.getBackgroundStyle(gameData.squares[fx + 1][fy]) &&
+					// 	!alreadyChecked.has(utils.encodeMatch(fx + 1, fy))
+					// ) {
+					// 	console.log('right is valid')
+					// 	toCheck.add(utils.encodeMatch(fx + 1, fy))
+					// }
+					// // check left
+					// if (
+					// 	fx > 0 &&
+					// 	utils.getBackgroundStyle(gameData.squares[fx - 1][fy]) &&
+					// 	!alreadyChecked.has(utils.encodeMatch(fx - 1, fy))
+					// ) {
+					// 	console.log('left is valid')
+					// 	toCheck.add(utils.encodeMatch(fx - 1, fy))
+					// }
+					// // check down
+					// if (
+					// 	fy < 6 &&
+					// 	utils.getBackgroundStyle(gameData.squares[fx][fy + 1]) &&
+					// 	!alreadyChecked.has(utils.encodeMatch(fx, fy + 1))
+					// ) {
+					// 	toCheck.add(utils.encodeMatch(fx, fy+1))
+					// }
+				}
+
+				console.log(toCheck, alreadyChecked)
+
+				return false
+			}
+
+			// check all 4 directions U D L R handling edge cases
+			// if any direction is white/valid, add to toCheck queue
+			// add current sq to alreadyChecked queue
+			// pop one from toCheck, recurse another function
+		},
+
 		onClick: function(e) {
 			gameData.stats.clicks.value += 1
 			let targetID = e.target.id
@@ -150,9 +250,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
 				let toElem = document.getElementById(to)
-
+				// check to see if path is valid?
+				console.log(gameData.clickQ)
 				// only move if we click on an empty square
-				if (!toElem.style.backgroundColor) {
+				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
 					utils.moveSquare(from, to)
 					console.log(gameData.matches)
 				}
@@ -174,12 +275,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	function Game() {
 		//main game is here
 
-		window.requestAnimationFrame =
-			window.requestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.webkitRequestAnimationFrame ||
-			window.oRequestAnimationFrame
-
 		window.requestAnimationFrame(this.draw.bind(this))
 	}
 
@@ -194,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkDR = function(x, y, matched) {
-		var matched = matched || [utils.encodeMatch(x,y)]
+		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			y < 6 &&
 			x < 6 &&
@@ -210,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkUR = function(x, y, matched) {
-		var matched = matched || [utils.encodeMatch(x,y)]
+		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			y < 6 &&
 			x > 0 &&
@@ -226,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkRight = function(x, y, matched) {
-		var matched = matched || [utils.encodeMatch(x,y)]
+		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			y < 6 &&
 			gameData.squares[x][y + 1].style.backgroundColor ===
@@ -241,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.checkDown = function(x, y, matched) {
-		var matched = matched || [utils.encodeMatch(x,y)]
+		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			x < 6 &&
 			gameData.squares[x + 1][y].style.backgroundColor ===
