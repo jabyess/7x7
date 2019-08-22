@@ -35,8 +35,8 @@ $ http-server .
 
 ## Todo:
 
-* Implement pathfinding algorithm to ensure moves are valid and invalid
-  * Only moves with a clear path should be considered valid
+* Clearing 4 or more in a row should not produce more colors
+* Invalid moves buggy - more colors appear.
 * Levels
   * Number of squares that appear every turn should increase
   * Every few levels (3 or 4), a new color is added

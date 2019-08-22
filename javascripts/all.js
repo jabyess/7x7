@@ -141,51 +141,33 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		},
 
 		isMoveValid: function(from, to) {
-			// starting with fx, fy which will be the from square
-			// tx, ty are to square coords
-			// x goes down
-			// y goes right
-
 			let fx = utils.getX(from)
 			let fy = utils.getY(from)
 
 			let tx = utils.getX(to)
 			let ty = utils.getY(to)
-
-			console.log(fx, fy, tx, ty)
-
 			// up === x-1
 			// down === x+1
 			// left === y-1
 			// right y+1
+
 			let toCheck = new Set()
 			let alreadyChecked = new Set()
 			toCheck.add(utils.encodeMatch(fx, fy))
 
-
-			// first check if from and to are the same,
-			// if so, path is valid, return true
-			// else
-
 			// fx, fy === current sq coords
-
 			// tx, ty === to square coords
 			while (toCheck.size > 0) {
-				console.log('starting loop', toCheck.size)
 				if (fx === tx && fy === ty) {
-					console.log("can move, move valid")
 					return true
 				} else {
 					alreadyChecked = alreadyChecked.add(utils.encodeMatch(fx, fy))
-					console.log('checking all directions', fx, fy)
 					// check up
 					if (
 						fx > 0 &&
 						!alreadyChecked.has(utils.encodeMatch(fx - 1, fy)) &&
 						!utils.hasBackground(gameData.squares[fx - 1][fy])
 					) {
-						console.log("adding up", fx-1, fy)
-						console.log(gameData.squares)
 						toCheck = toCheck.add(utils.encodeMatch(fx - 1, fy))
 					}
 					// check right
@@ -194,7 +176,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						!alreadyChecked.has(utils.encodeMatch(fx, fy + 1)) &&
 						!utils.hasBackground(gameData.squares[fx][fy + 1])
 					) {
-						console.log('adding right', fx, fy +1)
 						toCheck.add(utils.encodeMatch(fx, fy + 1))
 					}
 					// check left
@@ -203,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						!utils.hasBackground(gameData.squares[fx][fy - 1]) &&
 						!alreadyChecked.has(utils.encodeMatch(fx, fy - 1))
 					) {
-						console.log("adding left", fx, fy - 1)
 						toCheck.add(utils.encodeMatch(fx, fy - 1))
 					}
 					// check down
@@ -212,32 +192,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						!utils.hasBackground(gameData.squares[fx + 1][fy]) &&
 						!alreadyChecked.has(utils.encodeMatch(fx + 1, fy))
 					) {
-						console.log('adding down', fx+1, fy)
 						toCheck.add(utils.encodeMatch(fx + 1, fy))
 					}
 				}
 
-
-				
 				toCheck.delete(utils.encodeMatch(fx, fy))
 				
-				console.log(toCheck, alreadyChecked)
-
 				for(let c of toCheck.values()) {
 					let nextCoords = utils.decodeMatch(c)
 					fx = nextCoords[0]
 					fy = nextCoords[1]
 					break
 				}
-				console.log("starting loop again", fx, fy)
 			}
-
-			
-
-			// check all 4 directions U D L R handling edge cases
-			// if any direction is white/valid, add to toCheck queue
-			// add current sq to alreadyChecked queue
-			// pop one from toCheck, recurse another function
 		},
 
 		onClick: function(e) {
