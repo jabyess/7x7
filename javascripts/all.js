@@ -191,44 +191,48 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					// check right
 					if (
 						fy < 6 &&
-						!alreadyChecked.has(utils.encodeMatch(fx, fy + 1)) 
-						// &&
-						// !utils.hasBackground(gameData.squares[fx][fy + 1])
+						!alreadyChecked.has(utils.encodeMatch(fx, fy + 1)) &&
+						!utils.hasBackground(gameData.squares[fx][fy + 1])
 					) {
-						console.log('adding right')
+						console.log('adding right', fx, fy +1)
 						toCheck.add(utils.encodeMatch(fx, fy + 1))
 					}
-					// // check left
-					// if (
-					// 	fx > 0 &&
-					// 	utils.getBackgroundStyle(gameData.squares[fx - 1][fy]) &&
-					// 	!alreadyChecked.has(utils.encodeMatch(fx - 1, fy))
-					// ) {
-					// 	console.log('left is valid')
-					// 	toCheck.add(utils.encodeMatch(fx - 1, fy))
-					// }
-					// // check down
-					// if (
-					// 	fy < 6 &&
-					// 	utils.getBackgroundStyle(gameData.squares[fx][fy + 1]) &&
-					// 	!alreadyChecked.has(utils.encodeMatch(fx, fy + 1))
-					// ) {
-					// 	toCheck.add(utils.encodeMatch(fx, fy+1))
-					// }
+					// check left
+					if (
+						fy > 0 &&
+						!utils.hasBackground(gameData.squares[fx][fy - 1]) &&
+						!alreadyChecked.has(utils.encodeMatch(fx, fy - 1))
+					) {
+						console.log("adding left", fx, fy - 1)
+						toCheck.add(utils.encodeMatch(fx, fy - 1))
+					}
+					// check down
+					if (
+						fx < 6 &&
+						!utils.hasBackground(gameData.squares[fx + 1][fy]) &&
+						!alreadyChecked.has(utils.encodeMatch(fx + 1, fy))
+					) {
+						console.log('adding down', fx+1, fy)
+						toCheck.add(utils.encodeMatch(fx + 1, fy))
+					}
 				}
 
 
+				
+				toCheck.delete(utils.encodeMatch(fx, fy))
+				
 				console.log(toCheck, alreadyChecked)
 
-				toCheck.delete(utils.encodeMatch(fx, fy))
 				for(let c of toCheck.values()) {
 					let nextCoords = utils.decodeMatch(c)
-					console.log(c, nextCoords)
 					fx = nextCoords[0]
 					fy = nextCoords[1]
-					return
+					break
 				}
+				console.log("starting loop again", fx, fy)
 			}
+
+			
 
 			// check all 4 directions U D L R handling edge cases
 			// if any direction is white/valid, add to toCheck queue
