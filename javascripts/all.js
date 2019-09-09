@@ -38,9 +38,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					var colId = Math.floor(Math.random() * 7)
 					var squareToFill = document.getElementById(`sq${rowId}${colId}`)
 					if (squareToFill.style.backgroundColor) {
-						console.log("picked a full square!")
 						i--
 					} else {
+						console.log("filling square " + rowId + colId)
 						squareToFill.style.backgroundColor = utils.draw.pickRandomColor(
 							utils.colors,
 							3
@@ -106,13 +106,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			let fromSquare = document.getElementById(from)
 			let toSquare = document.getElementById(to)
 
-			toSquare.style.backgroundColor = fromSquare.style.backgroundColor
+			fromColor = fromSquare.style.backgroundColor
+
+			toSquare.style.backgroundColor = fromColor
 			fromSquare.removeAttribute("style")
 			fromSquare.classList.remove("active")
 			gameData.active = ""
 			gameData.stats.moves.value += 1
 
-			utils.draw.fillEmptySquares(gameData.stats.level.value + 1)
+			utils.draw.fillEmptySquares(gameData.stats.level.value + 2)
 		},
 
 		updateNumbers: function() {
@@ -217,8 +219,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				gameData.clickQ.pop()
 			}
 
-			gameData.clickQ.unshift(targetID)
-
+			// prevent stacking of same squares
+			if(gameData.clickQ[0] != targetID) {
+				gameData.clickQ.unshift(targetID)
+			}
+				
 			if (!gameData.active && bgc) {
 				// set active id
 				gameData.active = targetID
@@ -234,12 +239,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
 				let toElem = document.getElementById(to)
-				// check to see if path is valid?
 				console.log(gameData.clickQ)
 				// only move if we click on an empty square
 				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
-					utils.moveSquare(from, to)
+					console.log("moving", from, to)
 					console.log(gameData.matches)
+					utils.moveSquare(from, to)
 					game.update()
 					
 				}
