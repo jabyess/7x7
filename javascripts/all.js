@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						gameData.squares[r].push(sq)
 					}
 				}
-				console.log(gameData.squares)
 			}
 		},
 
@@ -113,8 +112,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			fromSquare.classList.remove("active")
 			gameData.active = ""
 			gameData.stats.moves.value += 1
-
-			utils.draw.fillEmptySquares(gameData.stats.level.value + 2)
 		},
 
 		updateNumbers: function() {
@@ -199,8 +196,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				}
 
 				toCheck.delete(utils.encodeMatch(fx, fy))
-				
-				for(let c of toCheck.values()) {
+
+				for (let c of toCheck.values()) {
 					let nextCoords = utils.decodeMatch(c)
 					fx = nextCoords[0]
 					fy = nextCoords[1]
@@ -220,10 +217,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 
 			// prevent stacking of same squares
-			if(gameData.clickQ[0] != targetID) {
+			if (gameData.clickQ[0] != targetID) {
 				gameData.clickQ.unshift(targetID)
 			}
-				
+
 			if (!gameData.active && bgc) {
 				// set active id
 				gameData.active = targetID
@@ -239,18 +236,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
 				let toElem = document.getElementById(to)
-				console.log(gameData.clickQ)
 				// only move if we click on an empty square
 				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
 					console.log("moving", from, to)
-					console.log(gameData.matches)
 					utils.moveSquare(from, to)
 					game.update()
-					
 				}
 			}
-
-			utils.updateNumbers()
 		},
 
 		colors: {
@@ -269,6 +261,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 	Game.prototype.update = function() {
 		this.checkNeighborsLoop()
+		if (gameData.matches.size > 0) {
+			console.log('removing matches', gameData.matches)
+			this.removeMatches()
+
+		}
+		else {
+			utils.draw.fillEmptySquares(gameData.stats.level.value + 2)
+			this.checkNeighborsLoop()
+			if(gameData.matches.size > 0) {
+				this.removeMatches()
+			}
+		}
+		utils.updateNumbers()
 	}
 
 	Game.prototype.checkDR = function(x, y, matched) {
@@ -343,7 +348,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				if (gameData.squares[x][y].style.backgroundColor) {
 					// initiate checking functions
 					this.checkNeighbors(x, y)
-					this.removeMatches()
 				}
 			}
 		}
@@ -380,13 +384,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 
 	Game.prototype.removeMatches = function() {
-		if (gameData.matches.size > 0) {
-			this.calcScore(gameData.matches.size)
-			for (let match of gameData.matches.values()) {
-				let coords = utils.decodeMatch(match)
-				gameData.squares[coords[0]][coords[1]].removeAttribute("style")
-				gameData.matches.delete(match)
-			}
+		this.calcScore(gameData.matches.size)
+		for (let match of gameData.matches.values()) {
+			let coords = utils.decodeMatch(match)
+			gameData.squares[coords[0]][coords[1]].removeAttribute("style")
+			gameData.matches.delete(match)
 		}
 	}
 
@@ -394,15 +396,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		console.log("init fired")
 
 		utils.init.drawBoard()
-		
+
 		var squareListeners = document.getElementsByClassName("square")
 
 		// setup onclick handlers
 		for (var i = 0; i < squareListeners.length; i++) {
 			squareListeners[i].addEventListener("click", utils.onClick, false)
 		}
-		
-		utils.draw.fillEmptySquares(3)
+
 		this.update()
 	}
 

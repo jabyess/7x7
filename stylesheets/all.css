@@ -26,7 +26,8 @@ html {
     width: 4.98rem;
     height: 5rem;
     border: 1px solid #bcbcbc;
-    display: inline-block; }
+    display: inline-block;
+    transition: background-color 200ms linear; }
     #boardcontainer .square.active {
       transform: scale(1.1, 1.1); }
 
