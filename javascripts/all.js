@@ -121,17 +121,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			return num.split("").map(n => parseInt(n))
 		},
 
-		hoverPreview: function(e) {
-			// let activeColor = gameData.active
-			if(gameData.active) {
-				const active = document.getElementById(gameData.active)
-				const activeColor = active.style.backgroundColor
-				console.log(activeColor)
-				e.target.style.backgroundColor = activeColor
+		// hoverPreview: function(e) {
+		// 	// let activeColor = gameData.active
+		// 	if(gameData.active) {
+		// 		const active = document.getElementById(gameData.active)
+		// 		const activeColor = active.style.backgroundColor
+		// 		console.log(activeColor)
+		// 		e.target.style.backgroundColor = activeColor
 
-			}
+		// 	}
 
-		},
+		// },
 
 		makeActive: function(id) {
 			let current = document.getElementById(id)
@@ -447,7 +447,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// setup onclick handlers
 		for (var i = 0; i < squareListeners.length; i++) {
 			squareListeners[i].addEventListener("click", utils.onClick, false)
-			squareListeners[i].addEventListener("mouseover", utils.hoverPreview)
 		}
 
 		this.update()
