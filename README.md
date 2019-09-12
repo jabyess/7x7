@@ -35,10 +35,8 @@ $ http-server .
 
 ## Todo:
 
-* Clearing 4 or more in a row should not produce more colors
-* Invalid moves buggy - more colors appear.
 * Levels
-  * Number of squares that appear every turn should increase
+  * ~~Number of squares that appear every turn should increase~~
   * Every few levels (3 or 4), a new color is added
-* Dynamic grid size
+* Dynamic grid size??
 * CSS / styling

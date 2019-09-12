@@ -1,5 +1,8 @@
+@import "_variables";
+
 * {
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 html {
@@ -7,6 +10,7 @@ html {
 }
 
 .titlebar {
+  margin-top: 2rem;
   height: 4rem;
   .title {
     font-size: 3rem;
@@ -17,20 +21,21 @@ html {
 
 #gamecontainer {
   max-width: 90%;
-  border: 1px solid #000;
+  display: flex;
   font-size: 0;
-  padding: 2rem;
+  padding-top: 2rem;
   margin: auto;
 }
 
 #boardcontainer {
   margin: auto;
-  border: 1px solid #bcbcbc;
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
 
   .square {
-    width: 4.98rem;
+    width: 5rem;
     height: 5rem;
+    border-radius: 5px;
     border: 1px solid #bcbcbc;
     display: inline-block;
     transition: background-color 200ms linear;
@@ -39,11 +44,23 @@ html {
       transform: scale(1.1, 1.1);
     }
   }
+
+  .b-left {
+    border-left: 2px solid $border;
+  }
+  .b-right {
+    border-right: 2px solid $border;
+  }
+  .b-top {
+    border-top: 2px solid $border;
+  }
+  .b-bottom {
+    border-bottom: 2px solid $border;
+  }
 }
 
 #stats {
-  font-size: 14px;
-  margin-left: 50px;
+  font-size: 18px;
   display: inline-block;
   vertical-align: top;
 }

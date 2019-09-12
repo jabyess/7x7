@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(event) {
 	let gameData = {
-		level: 1,
 		stats: {
 			clicks: {
 				id: "clicks",
@@ -16,9 +15,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			},
 			level: {
 				id: "level",
-				value: 1
+				value: 0
 			}
 		},
+		levelMap: [ 1000, 2000, 4000, 6000, 10000, 20000 ],
 		active: "",
 		matches: new Set(),
 		clickQ: [],
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					if (squareToFill.style.backgroundColor) {
 						i--
 					} else {
-						console.log("filling square " + rowId + colId)
+						// console.log("filling square " + rowId + colId)
 						squareToFill.style.backgroundColor = utils.draw.pickRandomColor(
 							utils.colors,
 							3
@@ -67,13 +67,32 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					for (var c = 0; c <= width; c++) {
 						var sq = document.createElement("div")
 						sq.setAttribute("id", `sq${r}${c}`)
-						sq.setAttribute("class", "square")
+						sq.classList.add("square")
+						if(r === 0) {
+							sq.classList.add("b-top")
+						}
+						if(r === 6) {
+							sq.classList.add("b-bottom")
+						}
+						if(c === 0) {
+							sq.classList.add("b-left")
+						}
+						if(c === 6) {
+							sq.classList.add("b-right")
+						}
+						
 						sq.dataset.x = r
 						sq.dataset.y = c
 						rowElem.appendChild(sq)
 						gameData.squares[r].push(sq)
 					}
 				}
+			},
+			randomTitleColor: function() {
+				const color = utils.draw.pickRandomColor(utils.colors, 6)
+				console.log(color)
+				let title = document.querySelector('h3.title')
+				title.style.color = color
 			}
 		},
 
@@ -83,12 +102,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			})
 		},
 
+		updateLevel: function() {
+			const currentScore = gameData.stats.score.value
+
+			gameData.levelMap.forEach((curr, i, arr) => {
+				if(currentScore > curr && currentScore < arr[i+1]) {
+					gameData.stats.level.value = i + 1
+				}
+			})
+			
+		},
+
 		encodeMatch: function(x, y) {
 			return `${x}${y}`
 		},
 
 		decodeMatch: function(num) {
 			return num.split("").map(n => parseInt(n))
+		},
+
+		hoverPreview: function(e) {
+			// let activeColor = gameData.active
+			if(gameData.active) {
+				const active = document.getElementById(gameData.active)
+				const activeColor = active.style.backgroundColor
+				console.log(activeColor)
+				e.target.style.backgroundColor = activeColor
+
+			}
+
 		},
 
 		makeActive: function(id) {
@@ -238,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				let toElem = document.getElementById(to)
 				// only move if we click on an empty square
 				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
-					console.log("moving", from, to)
+					// console.log("moving", from, to)
 					utils.moveSquare(from, to)
 					game.update()
 				}
@@ -267,12 +309,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 		}
 		else {
-			utils.draw.fillEmptySquares(gameData.stats.level.value + 2)
+			utils.draw.fillEmptySquares(gameData.stats.level.value + 3)
 			this.checkNeighborsLoop()
 			if(gameData.matches.size > 0) {
 				this.removeMatches()
 			}
 		}
+		
+		utils.updateLevel()
 		utils.updateNumbers()
 	}
 
@@ -364,10 +408,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				mult = 12.5
 				break
 			case 6:
-				mult = 17.5
+				mult = 20
 				break
 			case 7:
-				mult = 25
+				mult = 30
 				break
 			default:
 				mult = 40
@@ -376,9 +420,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 		let filler = Array(length).fill(1 * mult, 0)
 
-		let score = filler.reduce((acc, curr) => {
+		let score = Math.round(filler.reduce((acc, curr) => {
 			return (acc += curr)
-		})
+		}))
 
 		gameData.stats.score.value += score
 	}
@@ -396,12 +440,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		console.log("init fired")
 
 		utils.init.drawBoard()
+		utils.init.randomTitleColor()
 
 		var squareListeners = document.getElementsByClassName("square")
 
 		// setup onclick handlers
 		for (var i = 0; i < squareListeners.length; i++) {
 			squareListeners[i].addEventListener("click", utils.onClick, false)
+			squareListeners[i].addEventListener("mouseover", utils.hoverPreview)
 		}
 
 		this.update()

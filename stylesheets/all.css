@@ -1,10 +1,12 @@
 * {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  font-family: sans-serif; }
 
 html {
   font-size: 18px; }
 
 .titlebar {
+  margin-top: 2rem;
   height: 4rem; }
   .titlebar .title {
     font-size: 3rem;
@@ -13,26 +15,34 @@ html {
 
 #gamecontainer {
   max-width: 90%;
-  border: 1px solid #000;
+  display: flex;
   font-size: 0;
-  padding: 2rem;
+  padding-top: 2rem;
   margin: auto; }
 
 #boardcontainer {
   margin: auto;
-  border: 1px solid #bcbcbc;
-  display: inline-block; }
+  display: flex;
+  flex-wrap: wrap; }
   #boardcontainer .square {
-    width: 4.98rem;
+    width: 5rem;
     height: 5rem;
+    border-radius: 5px;
     border: 1px solid #bcbcbc;
     display: inline-block;
     transition: background-color 200ms linear; }
     #boardcontainer .square.active {
       transform: scale(1.1, 1.1); }
+  #boardcontainer .b-left {
+    border-left: 2px solid #bcbcbc; }
+  #boardcontainer .b-right {
+    border-right: 2px solid #bcbcbc; }
+  #boardcontainer .b-top {
+    border-top: 2px solid #bcbcbc; }
+  #boardcontainer .b-bottom {
+    border-bottom: 2px solid #bcbcbc; }
 
 #stats {
-  font-size: 14px;
-  margin-left: 50px;
+  font-size: 18px;
   display: inline-block;
   vertical-align: top; }
