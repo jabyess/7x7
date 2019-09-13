@@ -23,7 +23,8 @@ html {
 #boardcontainer {
   margin: auto;
   display: flex;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  max-width: 1000px; }
   #boardcontainer .square {
     width: 5rem;
     height: 5rem;

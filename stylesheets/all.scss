@@ -31,6 +31,7 @@ html {
   margin: auto;
   display: flex;
   flex-wrap: wrap;
+  max-width: 1000px;
 
   .square {
     width: 5rem;
