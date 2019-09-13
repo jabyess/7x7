@@ -17,7 +17,9 @@ bundlers, only browser-safe ES6. I did have one allowance to use Sass, which I u
 ## Rules
 Every turn, random squares appear in random locations. Select a square and move it to the desired location. If you can arrange 4 or more squares adjacently, they disappear. Bonus multiplier for removing >4 at a time.
 
-A square may only be moved if there's a clear path to the new location (but this doesn't work yet).
+A square may only be moved if there's a clear path to the new location.
+
+As you accumulate points, the difficulty level increases.
 
 ## Execution
 
@@ -36,7 +38,7 @@ $ http-server .
 ## Todo:
 
 * Levels
-  * ~~Number of squares that appear every turn should increase~~
+  * ~~Number of squares that appear every turn should increase as levels progress~~
   * Every few levels (3 or 4), a new color is added
 * Dynamic grid size??
 * CSS / styling
