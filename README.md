@@ -7,7 +7,7 @@ found years ago.
 
 I remember playing it on android and thinking "I could probably build this" when
 I was first starting out my programming career. So I started on it and have
-(mostly not) worked on it over the past few years.
+(mostly not) worked on it over the past few years until recently.
 
 ## About
 
@@ -15,11 +15,15 @@ The only rules I gave myself were to write everything in vanilla JS. No
 bundlers, only browser-safe ES6. I did have one allowance to use Sass, which I use gulp to compile.
 
 ## Rules
-Every turn, random squares appear in random locations. Select a square and move it to the desired location. If you can arrange 4 or more squares adjacently, they disappear. Bonus multiplier for removing >4 at a time.
+Every turn, random colored squares appear in random (empty) locations. Select a square and move it to the desired location. If you can arrange 4 or more squares adjacently, they disappear. Bonus multiplier for removing >4 at a time.
 
 A square may only be moved if there's a clear path to the new location.
 
-As you accumulate points, the difficulty level increases.
+As you accumulate points, the difficulty level increases (more squares appear every turn).
+
+## Live version
+
+http://jabyess.github.io/7x7/
 
 ## Execution
 

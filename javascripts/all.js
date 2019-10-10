@@ -18,7 +18,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				value: 0
 			}
 		},
-		levelMap: [ 1000, 2000, 4000, 6000, 10000, 20000 ],
+		scoreQ: [],
+		// levelMap: [1000, 2000, 4000, 6000, 10000, 20000],
+		levelMap: [100, 200, 4000, 6000, 10000, 20000],
 		active: "",
 		matches: new Set(),
 		clickQ: [],
@@ -68,19 +70,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						var sq = document.createElement("div")
 						sq.setAttribute("id", `sq${r}${c}`)
 						sq.classList.add("square")
-						if(r === 0) {
+						if (r === 0) {
 							sq.classList.add("b-top")
 						}
-						if(r === 6) {
+						if (r === 6) {
 							sq.classList.add("b-bottom")
 						}
-						if(c === 0) {
+						if (c === 0) {
 							sq.classList.add("b-left")
 						}
-						if(c === 6) {
+						if (c === 6) {
 							sq.classList.add("b-right")
 						}
-						
+
 						sq.dataset.x = r
 						sq.dataset.y = c
 						rowElem.appendChild(sq)
@@ -91,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			randomTitleColor: function() {
 				const color = utils.draw.pickRandomColor(utils.colors, 6)
 				console.log(color)
-				let title = document.querySelector('h3.title')
+				let title = document.querySelector("h3.title")
 				title.style.color = color
 			}
 		},
@@ -103,14 +105,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		},
 
 		updateLevel: function() {
-			const currentScore = gameData.stats.score.value
+			const currentScore = gameData.scoreQ[0]
 
 			gameData.levelMap.forEach((curr, i, arr) => {
-				if(currentScore > curr && currentScore < arr[i+1]) {
+				if (currentScore > curr && currentScore < arr[i + 1]) {
 					gameData.stats.level.value = i + 1
+					if(gameData.scoreQ[1] < curr) {
+						// do levelup animation
+						// levelUpAnimation()
+					}
 				}
 			})
-			
 		},
 
 		encodeMatch: function(x, y) {
@@ -304,18 +309,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	Game.prototype.update = function() {
 		this.checkNeighborsLoop()
 		if (gameData.matches.size > 0) {
-			console.log('removing matches', gameData.matches)
+			console.log("removing matches", gameData.matches)
 			this.removeMatches()
-
-		}
-		else {
+		} else {
 			utils.draw.fillEmptySquares(gameData.stats.level.value + 3)
 			this.checkNeighborsLoop()
-			if(gameData.matches.size > 0) {
+			if (gameData.matches.size > 0) {
 				this.removeMatches()
 			}
 		}
-		
+
 		utils.updateLevel()
 		utils.updateNumbers()
 	}
@@ -397,6 +400,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 	}
 
+	// Game.prototype.animateLevelUp = function() {
+		
+	// 	let title = document.querySelector('h3.title')
+
+	// 	title.classList.add("levelup")
+
+	// 	window.setTimeout(() => {
+
+			
+	// 	}, 1000);
+	// }
+
 	Game.prototype.calcScore = function(length) {
 		let mult
 
@@ -420,11 +435,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 		let filler = Array(length).fill(1 * mult, 0)
 
-		let score = Math.round(filler.reduce((acc, curr) => {
-			return (acc += curr)
-		}))
+		let score = Math.round(
+			filler.reduce((acc, curr) => {
+				return (acc += curr)
+			})
+		)
 
 		gameData.stats.score.value += score
+
+		if (gameData.scoreQ.length > 10) {
+			gameData.scoreQ.pop()
+		}
+		gameData.scoreQ.unshift(gameData.stats.score.value)
 	}
 
 	Game.prototype.removeMatches = function() {

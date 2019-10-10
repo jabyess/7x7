@@ -11,20 +11,21 @@ html {
   .titlebar .title {
     font-size: 3rem;
     margin: auto;
-    text-align: center; }
+    text-align: center;
+    transition: scale 500ms linear; }
 
 #gamecontainer {
-  max-width: 90%;
   display: flex;
   font-size: 0;
   padding-top: 2rem;
-  margin: auto; }
+  margin: auto;
+  justify-content: space-around; }
 
 #boardcontainer {
-  margin: auto;
   display: flex;
   flex-wrap: wrap;
-  max-width: 1000px; }
+  max-width: 700px;
+  min-width: 650px; }
   #boardcontainer .square {
     width: 5rem;
     height: 5rem;
@@ -47,3 +48,6 @@ html {
   font-size: 18px;
   display: inline-block;
   vertical-align: top; }
+
+.levelUp {
+  transform: scale(1.5, 1.5); }
