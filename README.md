@@ -46,3 +46,5 @@ $ http-server .
   * Every few levels (3 or 4), a new color is added
 * Dynamic grid size??
 * CSS / styling
+* animations
+* highlight valid move paths
