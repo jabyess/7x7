@@ -39,12 +39,20 @@ $ npm install -g http-server
 $ http-server .
 ```
 
+## To run gulp and compile sass to css
+tested using node 12.22.12
+
+- `npm install` 
+- `npx gulp`
+
+
 ## Todo:
 
 * Levels
   * ~~Number of squares that appear every turn should increase as levels progress~~
   * Every few levels (3 or 4), a new color is added
 * Dynamic grid size??
+* on successful move, don't make pieces disappear instantly, play some animation
 * CSS / styling
 * animations
 * highlight valid move paths
