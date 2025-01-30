@@ -5,6 +5,30 @@
 html {
   font-size: 18px; }
 
+.red {
+  background-color: #ff141d;
+  color: #ff141d; }
+
+.green {
+  background-color: #00f40d;
+  color: #00f40d; }
+
+.blue {
+  background-color: #2882ff;
+  color: #2882ff; }
+
+.cyan {
+  background-color: #14fcff;
+  color: #14fcff; }
+
+.orange {
+  background-color: #ff9300;
+  color: #ff9300; }
+
+.purple {
+  background-color: #ff00bd;
+  color: #ff00bd; }
+
 .titlebar {
   margin-top: 2rem;
   height: 4rem; }

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function() {
 	let gameData = {
 		stats: {
 			clicks: {
@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		},
 		scoreQ: [],
-		// levelMap: [1000, 2000, 4000, 6000, 10000, 20000],
 		levelMap: [100, 200, 4000, 6000, 10000, 20000],
 		active: "",
 		matches: new Set(),
 		clickQ: [],
-		squares: []
+		squares: [],
+
 	}
 
 	let utils = {
@@ -39,14 +39,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					var rowId = Math.floor(Math.random() * 7)
 					var colId = Math.floor(Math.random() * 7)
 					var squareToFill = document.getElementById(`sq${rowId}${colId}`)
-					if (squareToFill.style.backgroundColor) {
+					if (squareToFill.dataset.color) {
 						i--
 					} else {
-						// console.log("filling square " + rowId + colId)
-						squareToFill.style.backgroundColor = utils.draw.pickRandomColor(
-							utils.colors,
+						const color = utils.draw.pickRandomColor(
+							utils.colorClasses,
 							3
 						)
+						squareToFill.dataset.color = color
+						squareToFill.classList.add(color)
+
 					}
 				}
 			}
@@ -92,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			},
 			randomTitleColor: function() {
 				const color = utils.draw.pickRandomColor(utils.colors, 6)
-				console.log(color)
 				let title = document.querySelector("h3.title")
 				title.style.color = color
 			}
@@ -126,18 +127,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			return num.split("").map(n => parseInt(n))
 		},
 
-		// hoverPreview: function(e) {
-		// 	// let activeColor = gameData.active
-		// 	if(gameData.active) {
-		// 		const active = document.getElementById(gameData.active)
-		// 		const activeColor = active.style.backgroundColor
-		// 		console.log(activeColor)
-		// 		e.target.style.backgroundColor = activeColor
-
-		// 	}
-
-		// },
-
 		makeActive: function(id) {
 			let current = document.getElementById(id)
 			current.classList.add("active")
@@ -151,12 +140,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		moveSquare: function(from, to) {
 			let fromSquare = document.getElementById(from)
 			let toSquare = document.getElementById(to)
+			let fromColor = fromSquare.dataset.color
 
-			fromColor = fromSquare.style.backgroundColor
-
-			toSquare.style.backgroundColor = fromColor
-			fromSquare.removeAttribute("style")
+			toSquare.classList.add(fromColor)
+			toSquare.dataset.color = fromColor
+			fromSquare.classList.remove(fromColor)
 			fromSquare.classList.remove("active")
+			delete fromSquare.dataset.color
 			gameData.active = ""
 			gameData.stats.moves.value += 1
 		},
@@ -169,8 +159,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		},
 
+		// todo bgcolor
 		hasBackground: function(element) {
-			if (element.style && element.style.backgroundColor) {
+			if (element.dataset.color) {
 				return true
 			}
 			return false
@@ -256,7 +247,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		onClick: function(e) {
 			gameData.stats.clicks.value += 1
 			let targetID = e.target.id
-			let bgc = e.target.style.backgroundColor
+
+			//todo bgcolor
+			let bgc = e.target.dataset.color
 
 			// keep queue short
 			if (gameData.clickQ.length > 10) {
@@ -268,6 +261,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				gameData.clickQ.unshift(targetID)
 			}
 
+			//todo bgcolor
 			if (!gameData.active && bgc) {
 				// set active id
 				gameData.active = targetID
@@ -278,18 +272,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				// then deselect
 				utils.makeInactive(gameData.active)
 				gameData.active = null
+			//todo bgcolor
 			} else if (gameData.active && !bgc) {
 				// move square
 				let from = gameData.clickQ[1]
 				let to = gameData.clickQ[0]
 				let toElem = document.getElementById(to)
 				// only move if we click on an empty square
-				if (!toElem.style.backgroundColor && utils.isMoveValid(from, to)) {
-					// console.log("moving", from, to)
+				if (!toElem.dataset.color && utils.isMoveValid(from, to)) {
 					utils.moveSquare(from, to)
 					game.update()
 				}
-			}
+			}	},
+
+		colorClasses: {
+			"red": "red",
+			"green": "green",
+			"blue": "blue",
+			"purple" : "purple", 
+			"cyan": "cyan",
+			"orange": "orange"
 		},
 
 		colors: {
@@ -309,7 +311,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	Game.prototype.update = function() {
 		this.checkNeighborsLoop()
 		if (gameData.matches.size > 0) {
-			console.log("removing matches", gameData.matches)
 			this.removeMatches()
 		} else {
 			utils.draw.fillEmptySquares(gameData.stats.level.value + 3)
@@ -328,8 +329,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		if (
 			y < 6 &&
 			x < 6 &&
-			gameData.squares[x + 1][y + 1].style.backgroundColor ===
-				gameData.squares[x][y].style.backgroundColor
+			gameData.squares[x + 1][y + 1].dataset.color ===
+				gameData.squares[x][y].dataset.color 
 		) {
 			matched.push(utils.encodeMatch(x + 1, y + 1))
 			this.checkDR(x + 1, y + 1, matched)
@@ -343,8 +344,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		if (
 			y < 6 &&
 			x > 0 &&
-			gameData.squares[x - 1][y + 1].style.backgroundColor ===
-				gameData.squares[x][y].style.backgroundColor
+			gameData.squares[x - 1][y + 1].dataset.color ===
+				gameData.squares[x][y].dataset.color
 		) {
 			matched.push(utils.encodeMatch(x - 1, y + 1))
 			this.checkUR(x - 1, y + 1, matched)
@@ -357,8 +358,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			y < 6 &&
-			gameData.squares[x][y + 1].style.backgroundColor ===
-				gameData.squares[x][y].style.backgroundColor
+			gameData.squares[x][y + 1].dataset.color ===
+				gameData.squares[x][y].dataset.color
 		) {
 			matched.push(utils.encodeMatch(x, y + 1))
 			this.checkRight(x, y + 1, matched)
@@ -371,8 +372,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var matched = matched || [utils.encodeMatch(x, y)]
 		if (
 			x < 6 &&
-			gameData.squares[x + 1][y].style.backgroundColor ===
-				gameData.squares[x][y].style.backgroundColor
+			gameData.squares[x + 1][y].dataset.color ===
+				gameData.squares[x][y].dataset.color
 		) {
 			matched.push(utils.encodeMatch(x + 1, y))
 			this.checkDown(x + 1, y, matched)
@@ -392,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		for (let x = 0; x <= 6; x++) {
 			for (let y = 0; y <= 6; y++) {
 				// if no color, skip
-				if (gameData.squares[x][y].style.backgroundColor) {
+				if (gameData.squares[x][y].dataset.color) {
 					// initiate checking functions
 					this.checkNeighbors(x, y)
 				}
@@ -453,14 +454,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		this.calcScore(gameData.matches.size)
 		for (let match of gameData.matches.values()) {
 			let coords = utils.decodeMatch(match)
-			gameData.squares[coords[0]][coords[1]].removeAttribute("style")
+			let square = gameData.squares[coords[0]][coords[1]] 
+			let color = square.dataset.color
+			square.classList.remove(color)
+			delete square.dataset.color
+			
 			gameData.matches.delete(match)
 		}
+		utils.draw.fillEmptySquares(gameData.stats.level.value + 3)
 	}
 
 	Game.prototype.init = function() {
-		console.log("init fired")
-
 		utils.init.drawBoard()
 		utils.init.randomTitleColor()
 

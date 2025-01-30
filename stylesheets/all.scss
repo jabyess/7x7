@@ -9,6 +9,31 @@ html {
   font-size: 18px;
 }
 
+.red {
+  background-color: $red;
+  color: $red;
+}
+.green {
+  background-color: $green;
+  color: $green;
+}
+.blue {
+  background-color: $blue;
+  color: $blue;
+}
+.cyan {
+  background-color: $cyan;
+  color: $cyan;
+}
+.orange {
+  background-color: $orange;
+  color: $orange;
+}
+.purple {
+  background-color: $purple;
+  color: $purple;
+}
+
 .titlebar {
   margin-top: 2rem;
   height: 4rem;
