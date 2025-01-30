@@ -37,13 +37,14 @@ html {
   .square {
     width: 5rem;
     height: 5rem;
-    border-radius: 5px;
     border: 1px solid #bcbcbc;
     display: inline-block;
-    transition: background-color 200ms linear;
+    // transition: background-color 200ms linear;
 
     &.active {
-      transform: scale(1.1, 1.1);
+      scale: 110%;
+      transition: scale 150ms ease;
+      border: 1px solid #FFF;
     }
   }
 
@@ -70,4 +71,15 @@ html {
 .levelUp {
   transform: scale(1.5, 1.5)
 
+}
+
+
+@keyframes expando {
+  from {
+    scale: 100%;
+  }
+
+  to {
+    scale: 110%;
+  }
 }
