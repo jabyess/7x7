@@ -52,6 +52,7 @@ tested using node 12.22.12
   * Every few levels (3 or 4), a new color is added
 * Dynamic grid size??
 * on successful move, don't make pieces disappear instantly, play some animation
-* CSS / styling
+* CSS / styling - mobile friendly
 * animations
 * highlight valid move paths
+* track game state/every move so we can undo
